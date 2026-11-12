@@ -5,50 +5,41 @@
 </p>
 
 <p align="center">
-  Exploring embedded systems, wireless communication, software development, and applied machine learning.
-</p>
-
-<p align="center">
-  <a href="https://github.com/MukeshBalaji80">GitHub</a>
+  Embedded Systems · RF & Wireless Communication · Python · MATLAB
 </p>
 
 ---
 
 ## About Me
 
-- 🎓 B.E. in Electronics and Communication Engineering at Saveetha Engineering College
-- 📡 Interested in RF systems, wireless communication, and signal analysis
-- 🔌 Building and experimenting with Arduino and ESP32-based systems
-- 💻 Developing programming skills through practical projects
-- 🌱 Currently learning, documenting, and improving one project at a time
+- 🎓 B.E. Electronics and Communication Engineering
+- 🔌 Interested in building practical hardware and software projects
+- 📡 Exploring RF systems, wireless communication, and signal analysis
+- 💻 Learning through implementation, testing, and documentation
 
-## Technical Interests
+## Technical Skills
 
-- **Communication:** Computer Networks, 5G/6G, RF Communication
-- **Embedded Systems:** Arduino, ESP32, sensor interfacing
-- **Electronics:** Antenna and Wave Propagation, Digital Electronics, VLSI
-- **Software & AI:** Python, Machine Learning, Flutter, Node.js
+**Programming:** C, Python  
+**Engineering:** MATLAB, Arduino, ESP32  
+**Tools:** Git, GitHub, Flutter, Node.js
 
-## Tools & Technologies
+## Personal Projects
 
-`C` · `Python` · `MATLAB` · `Arduino` · `ESP32` · `Flutter` · `Node.js` · `Git` · `GitHub`
+These are the projects I plan to build and document here. They will be linked as their repositories are created.
 
-## Featured Repositories
-
-| Project | Description |
-| --- | --- |
-| [Rocky Companion](https://github.com/MukeshBalaji80/rocky-) | Flutter-based voice-first AI companion with local SQLite memory and a backend integration. |
-| [5G/6G Communication System](https://github.com/MukeshBalaji80/5g-6g-communication-system-) | Learning and project work related to next-generation communication systems. |
-| [Computer Networks](https://github.com/MukeshBalaji80/computer-networks) | Coursework and practical material related to computer networking. |
-| [Machine Learning](https://github.com/MukeshBalaji80/machine-learning-) | Machine-learning learning materials and experiments. |
-| [ECA5607 – 5G/6G](https://github.com/MukeshBalaji80/Eca5607-5g6g) | Academic work related to 5G and 6G communication. |
+| Project | What I'm building | Status |
+| --- | --- | --- |
+| **SignalScope** | ESP32-based Wi-Fi RSSI monitor with live serial data and MATLAB visualisation | In progress |
+| **WaveLab** | MATLAB toolkit for visualising RF propagation and antenna-related concepts | Planned |
+| **EnviroNode** | ESP32 environmental monitoring station with sensor readings and a dashboard | Planned |
+| **Rocky** | Voice-first AI companion with a Flutter app, backend, and local memory | In development |
 
 ## Current Focus
 
-- Developing an ESP32-based RF signal-strength monitoring project
-- Exploring indoor radio-wave propagation and MATLAB-based analysis
-- Improving code quality, documentation, and project presentation
-- Building a stronger foundation in embedded systems and communication engineering
+1. Build SignalScope from the hardware connections up.
+2. Capture Wi-Fi signal-strength readings from the ESP32.
+3. Stream readings to MATLAB and visualise signal changes.
+4. Document the circuit, code, setup, test results, and limitations.
 
 ## Connect
 
@@ -57,5 +48,5 @@
 ---
 
 <p align="center">
-  <i>Learning by building, testing, documenting, and improving.</i>
+  <i>Build it. Test it. Document it. Improve it.</i>
 </p>
