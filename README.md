@@ -1,4 +1,4 @@
-<h1 align="center">Hi, I'm Mukesh Balaji 👋</h1>
+<h1 align="center">Hi, I'm M.Mukesh Balaji 👋</h1>
 
 <p align="center">
   Electronics and Communication Engineering Student
