@@ -25,7 +25,7 @@ I'm an Electronics and Communication Engineering student interested in practical
 ## Tech Stack
 
 <p align="left">
-  <img src="https://skillicons.dev/icons?i=c,python,java,html,css,js,arduino,git,github,vscode,nodejs,flutter&perline=6" alt="Technology icons" />
+  <img src="https://skillicons.dev/icons?i= c, python, java, html, css, js, arduino, vscode, nodejs, flutter&perline=6" alt="Technology icons" />
 </p>
 
 **Hardware & engineering:** Arduino, ESP32, MATLAB  
