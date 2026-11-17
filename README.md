@@ -25,7 +25,7 @@ I'm an Electronics and Communication Engineering student interested in practical
 ## Tech Stack
 
 <p align="left">
-  <img src="https://skillicons.dev/icons?i=c,python,java,html,css,js,matlab,arduino,git,github,vscode,nodejs,flutter&perline=7" alt="Technology icons" />
+  <img src="https://skillicons.dev/icons?i=c,python,java,html,css,js,arduino,git,github,vscode,nodejs,flutter&perline=6" alt="Technology icons" />
 </p>
 
 **Hardware & engineering:** Arduino, ESP32, MATLAB  
@@ -50,15 +50,14 @@ I'm an Electronics and Communication Engineering student interested in practical
 - Exploring MATLAB visualisation of signal changes
 - Documenting implementation, testing, and results clearly
 
-## GitHub Statistics
-
-<p align="center">
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=MukeshBalaji80&show_icons=true&hide_title=true&include_all_commits=true&rank_icon=github&theme=default" alt="GitHub statistics" />
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=MukeshBalaji80&layout=compact&theme=default&langs_count=8" alt="Most used languages" />
-</p>
+## GitHub Activity
 
 <p align="center">
   <img src="https://streak-stats.demolab.com?user=MukeshBalaji80&theme=default&hide_border=true" alt="GitHub contribution streak" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/MukeshBalaji80?tab=repositories">Browse my public repositories</a>
 </p>
 
 ## Connect
