@@ -5,6 +5,10 @@
 </p>
 
 <p align="center">
+  <a href="https://mukeshbalaji80.github.io/MukeshBalaji80/"><strong>🌐 Visit My Portfolio Website</strong></a>
+</p>
+
+<p align="center">
   Embedded Systems · RF & Wireless Communication · Python · MATLAB
 </p>
 
@@ -44,7 +48,6 @@ These are the projects I plan to build and document here. They will be linked as
 ## Connect
 
 - GitHub: [@MukeshBalaji80](https://github.com/MukeshBalaji80)
+- Portfolio: [mukeshbalaji80.github.io/MukeshBalaji80](https://mukeshbalaji80.github.io/MukeshBalaji80/)
 
 ---
-
-
