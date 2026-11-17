@@ -62,6 +62,7 @@ I'm an Electronics and Communication Engineering student interested in practical
 
 ## Connect
 
+- 📧 Email: [mukeshbalaji80@gmail.com](mailto:mukeshbalaji80@gmail.com)
 - 🌐 Portfolio: [mukeshbalaji80.github.io/MukeshBalaji80](https://mukeshbalaji80.github.io/MukeshBalaji80/)
 - 💼 LinkedIn: [Mukesh Balaji](https://www.linkedin.com/in/mukesh-balaji-48475a3a8/)
 - 💻 GitHub: [@MukeshBalaji80](https://github.com/MukeshBalaji80)
