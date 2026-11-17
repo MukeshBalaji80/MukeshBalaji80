@@ -47,6 +47,4 @@ These are the projects I plan to build and document here. They will be linked as
 
 ---
 
-<p align="center">
-  <i>Build it. Test it. Document it. Improve it.</i>
-</p>
+
