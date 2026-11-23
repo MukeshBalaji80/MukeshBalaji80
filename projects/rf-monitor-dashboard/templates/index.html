@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 RSSI Monitor Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <h1>ESP32 RSSI Monitor</h1>
+    <span id="quality-badge" class="badge">--</span>
+  </header>
+
+  <nav>
+    <div class="control-row">
+      <div class="card">
+        <h2>Serial Connection</h2>
+        <div class="form-group">
+          <label>COM Port</label>
+          <select id="port-select"></select>
+          <button id="refresh-ports">&#8635; Refresh</button>
+        </div>
+        <div class="form-group">
+          <label>Baud Rate</label>
+          <select id="baud-select">
+            <option value="9600">9600</option>
+            <option value="19200">19200</option>
+            <option value="38400">38400</option>
+            <option value="57600">57600</option>
+            <option value="115200" selected>115200</option>
+          </select>
+        </div>
+        <div class="button-row">
+          <button id="connect-btn" class="btn btn-primary">Connect</button>
+          <button id="disconnect-btn" class="btn btn-secondary">Disconnect</button>
+        </div>
+        <p id="conn-status" class="status-text">Not connected</p>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="card">
+        <h2>Live Reading</h2>
+        <div class="big-reading" id="rssi-value">-- dBm</div>
+        <div id="quality-label">--</div>
+        <div class="form-group">
+          <label>Distance (manual measurement label)</label>
+          <p class="hint">Distance is a <b>manual label</b> — it is never calculated from RSSI.</p>
+          <input type="number" id="distance-input" value="1" step="0.1" min="0.001">
+          <button id="set-distance-btn" class="btn btn-primary">Set Distance</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-value" id="sample-count">0</div><div class="stat-label">Samples</div></div>
+          <div class="stat-box"><div class="stat-value" id="latest-time">-- ms</div><div class="stat-label">Elapsed</div></div>
+          <div class="stat-box"><div class="stat-value" id="latest-distance">-- m</div><div class="stat-label">Distance</div></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="chart-section">
+      <div class="card">
+        <h2>RSSI vs Time</h2>
+        <canvas id="rssi-chart" width="700" height="300"></canvas>
+      </div>
+    </section>
+
+    <section class="log-section">
+      <div class="card">
+        <h2>Serial Telemetry</h2>
+        <div id="telemetry-log" class="telemetry-log"></div>
+      </div>
+    </section>
+
+    <section class="history-section">
+      <div class="card">
+        <h2>Measurement History</h2>
+        <div class="table-wrap">
+          <table id="history-table">
+            <thead>
+              <tr><th>Time (ms)</th><th>Distance (m)</th><th>RSSI (dBm)</th></tr>
+            </thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
+        <div class="button-row">
+          <button id="export-btn" class="btn btn-primary">Export CSV</button>
+          <button id="clear-btn" class="btn btn-danger">Clear Data</button>
+        </div>
+        <p id="csv-note" class="hint">CSV header: Time_ms,Distance_m,RSSI_dBm</p>
+      </div>
+    </section>
+  </main>
+
+  <section class="matlab-section">
+    <div class="card matlab-card">
+      <h2>MATLAB Path-Loss Analysis</h2>
+      <p>Workflow: collect data &rarr; Export CSV &rarr; open MATLAB &rarr; run script &rarr; select CSV &rarr; view graphs and statistics.</p>
+
+      <div class="button-row">
+        <button id="export-matlab-btn" class="btn btn-primary">Export Current CSV</button>
+        <a href="/api/matlab"><button class="btn btn-secondary">Download MATLAB Code</button></a>
+        <a href="https://matlab.mathworks.com" target="_blank" rel="noopener">
+          <button class="btn btn-secondary">Open MATLAB Online</button>
+        </a>
+      </div>
+
+      <div class="matlab-note">
+        <p>Distance is always a manual label (never calculated from RSSI). The MATLAB script fits RSSI(d) = A + B·log10(d) using the manual distance column.</p>
+      </div>
+
+      <details class="source-box">
+        <summary>Show MATLAB Source Code</summary>
+        <pre><code id="matlab-code"></code></pre>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <p>Local dashboard — http://127.0.0.1:5000 — works only on this computer while the Flask server is running.</p>
+    <p id="firmware-note">Close Arduino Serial Monitor before connecting; otherwise the port will be busy.</p>
+  </footer>
+
+  <!-- Chart.js vendored locally (works offline) -->
+  <script src="{{ url_for('static', filename='chart.min.js') }}"></script>
+  <script>
+    // MATLAB source injected by Flask at render time (single source of truth)
+    window.__MATLAB_CODE__ = {{ matlab_code | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

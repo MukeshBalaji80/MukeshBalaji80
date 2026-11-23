@@ -1,0 +1,122 @@
+/* ============================================================
+   ESP32 RSSI Monitor Dashboard — styles
+   Dark, futuristic RF-lab instrument look
+   ============================================================ */
+:root {
+  --bg: #0b0c10;
+  --card-bg: #1a1c24;
+  --panel-bg: #212430;
+  --text: #e8eaee;
+  --text-muted: #94a3b8;
+  --accent: #00d9ff;      /* cyan */
+  --accent-glow: rgba(0, 217, 255, 0.35);
+  --danger: #ff4d4d;
+  --danger-glow: rgba(255, 77, 77, 0.25);
+  --success: #38d9a9;
+  --warning: #ffb700;
+  --border: #2d3040;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+body { background: radial-gradient(circle at top left, #131420 0%, #0b0c10 70%); min-height: 100vh; padding: 24px; line-height: 1.5; }
+
+header { display: flex; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+
+h1 { font-size: 1.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-shadow: 0 0 12px var(--accent-glow); }
+
+.badge {
+  margin-left: auto;
+  padding: 6px 12px; border-radius: 20px; background: var(--panel-bg); color: var(--text-muted);
+  border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600;
+}
+.badge.ok { color: var(--success); border-color: var(--success); background: rgba(56,217,169,0.12); }
+.badge.warn { color: var(--warning); border-color: var(--warning); background: rgba(255,183,0,0.12); }
+.badge.err { color: var(--danger); border-color: var(--danger); background: rgba(255,77,77,0.12); }
+
+nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 24px; }
+
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+
+section.matlab-section { grid-column: 1 / -1; }
+
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+.card h2 { font-size: 1.1rem; margin-bottom: 14px; color: var(--accent); letter-spacing: 0.04em; }
+.card h2::before { content: "▸ "; color: var(--accent-glow); }
+
+.control-row { display: contents; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 0.86rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+.form-group input, .form-group select {
+  width: 100%; background: var(--panel-bg); border: 1px solid var(--border); color: var(--text);
+  padding: 8px 10px; border-radius: 8px; font-size: 0.95rem; outline: none;
+}
+.form-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.form-group select { appearance: none; cursor: pointer; }
+
+.button-row { display: flex; gap: 10px; margin-top: 10px; }
+.btn { border: none; border-radius: 8px; padding: 9px 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: filter 0.15s, transform 0.1s; }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: #003b47; }
+.btn-secondary { background: var(--panel-bg); color: var(--text); border: 1px solid var(--border); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn:hover:not(:disabled) { filter: brightness(1.15); }
+
+.status-text { font-size: 0.9rem; color: var(--text-muted); margin-top: 8px; }
+
+.big-reading { font-size: 3.2rem; font-weight: 800; color: var(--accent); margin: 14px 0 6px; letter-spacing: 0.02em; }
+#quality-label { font-size: 1.1rem; color: var(--text-muted); }
+#quality-label.excellent { color: var(--success); }
+#quality-label.good { color: var(--success); }
+#quality-label.fair { color: var(--warning); }
+#quality-label.weak, #quality-label.very-weak { color: var(--danger); }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; }
+.stat-box { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+.stat-value { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Chart */
+.chart-section .card { display: flex; flex-direction: column; min-height: 420px; }
+canvas#rssi-chart { width: 100% !important; height: auto !important; background: var(--panel-bg); border-radius: 10px; border: 1px solid var(--border); }
+
+/* Telemetry log */
+.telemetry-log {
+  height: 340px; overflow-y: auto; background: #07080c; border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85rem; color: #6ee7b7;
+}
+.telemetry-log .line { white-space: pre-wrap; margin: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px; }
+.telemetry-log .line.dbg { color: var(--text-muted); }
+.telemetry-log .line.err { color: var(--danger); }
+
+/* History table */
+.table-wrap { overflow-x: auto; max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--panel-bg); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.04em; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* MATLAB section */
+.matlab-note { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin: 14px 0; font-size: 0.9rem; color: var(--text-muted); }
+.matlab-note p { margin-bottom: 8px; }
+.source-box { margin-top: 16px; border-top: 1px solid var(--border); }
+.source-box summary { padding: 10px; cursor: pointer; color: var(--accent); font-weight: 700; list-style: none; }
+.source-box pre { background: #07080c; border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: 0.86rem; color: #cbd5e1; white-space: pre-wrap; word-wrap: break-word; }
+
+.hint { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; }
+
+footer { border-top: 1px solid var(--border); padding-top: 16px; color: var(--text-muted); font-size: 0.85rem; }
+footer p { margin-bottom: 6px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { padding: 14px; }
+  nav, main { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .big-reading { font-size: 2.2rem; }
+}
