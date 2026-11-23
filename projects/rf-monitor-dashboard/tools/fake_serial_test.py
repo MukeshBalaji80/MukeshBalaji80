@@ -117,12 +117,62 @@ with app.test_client() as client:
     else:
         print(f"PASS: /api/matlab (no file: {resp.status_code})")
 
+    # ===== MATLAB output graphs =====
+    # List (should be empty initially)
+    resp = client.get("/api/matlab_graphs")
+    assert resp.status_code == 200
+    assert "graphs" in resp.get_json()
+    initial_count = len(resp.get_json()["graphs"])
+    print(f"PASS: /api/matlab_graphs (list, {initial_count} graphs)")
+
+    # Upload a tiny valid PNG (1x1 pixel, red) using a minimal valid PNG
+    import io
+    tiny_png = bytes.fromhex(
+        "89504e470d0a1a0a0000000d494844520000000100000001080600000"
+        "01f15c4890000000d49444154789c6360f8cf00000301010018dd8db0"
+        "0000000049454e44ae426082"
+    )
+    data = {"file": (io.BytesIO(tiny_png), "test_output_A.png")}
+    resp = client.post("/api/matlab_graphs/upload", data=data,
+                       content_type="multipart/form-data")
+    assert resp.status_code == 200, f"Upload failed: {resp.data}"
+    up = resp.get_json()
+    assert up["status"] == "uploaded"
+    print(f"PASS: /api/matlab_graphs/upload -> {up['filename']} ({up['size_kb']} KB)")
+
+    # List again (should now include the uploaded graph)
+    resp = client.get("/api/matlab_graphs")
+    graphs = resp.get_json()["graphs"]
+    assert any(g["filename"] == "test_output_A.png" for g in graphs)
+    print(f"PASS: /api/matlab_graphs (now {len(graphs)} graphs)")
+
+    # Serve the file
+    resp = client.get("/api/matlab_graphs/file/test_output_A.png")
+    assert resp.status_code == 200
+    assert resp.data == tiny_png
+    print("PASS: /api/matlab_graphs/file/<name> (served correctly)")
+
+    # Reject a non-image upload
+    data = {"file": (io.BytesIO(b"not an image"), "evil.exe")}
+    resp = client.post("/api/matlab_graphs/upload", data=data,
+                       content_type="multipart/form-data")
+    assert resp.status_code == 400
+    print("PASS: /api/matlab_graphs/upload (rejects .exe)")
+
+    # Delete the uploaded graph
+    resp = client.post("/api/matlab_graphs/delete/test_output_A.png")
+    assert resp.status_code == 200
+    resp = client.get("/api/matlab_graphs/file/test_output_A.png")
+    assert resp.status_code == 404
+    print("PASS: /api/matlab_graphs/delete (graph removed)")
+
     # Root page
     resp = client.get("/")
     assert resp.status_code == 200
     html = resp.data.decode("utf-8")
     assert "ESP32 RSSI Monitor" in html
-    print("PASS: / (dashboard HTML)")
+    assert "MATLAB Output Graphs" in html
+    print("PASS: / (dashboard HTML, includes MATLAB output section)")
 
 print("\nAll tests passed!")
 print("\nNote: Real COM port testing requires a connected device.")

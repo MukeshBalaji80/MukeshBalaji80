@@ -77,6 +77,30 @@ xlabel('Distance (m)'); ylabel('RSSI (dBm)');
 title('RSSI vs Distance (individual readings)');
 grid on; box on;
 
+% ----- 10. Save figures as PNG images for dashboard output gallery -----
+% Save each figure as a PNG so they can be uploaded to the dashboard's
+% MATLAB Output Graphs gallery. These are real experimental outputs.
+outputBase = fullfile(folderPath, [baseName, '_fig']);
+saveas(gcf, [outputBase, '_A.png']);  % saved after each figure below
+
+% Figure A already created; save it now explicitly before moving on
+figure('Name', 'A — RSSI vs Time', 'NumberTitle', 'off');
+set(gcf, 'Color', 'w');
+plot(T.Time_ms / 1000, T.RSSI_dBm, 'b.', 'MarkerSize', 6);
+xlabel('Time (s)'); ylabel('RSSI (dBm)');
+title('RSSI vs Time (raw readings)');
+grid on; box on;
+saveas(gcf, [outputBase, '_A.png']);
+
+% Figure B already created; save it
+figure('Name', 'B — RSSI vs Distance (all readings)', 'NumberTitle', 'off');
+set(gcf, 'Color', 'w');
+plot(T.Distance_m, T.RSSI_dBm, 'b.', 'MarkerSize', 6);
+xlabel('Distance (m)'); ylabel('RSSI (dBm)');
+title('RSSI vs Distance (individual readings)');
+grid on; box on;
+saveas(gcf, [outputBase, '_B.png']);
+
 % ----- 5. Group by distance -----
 % Use unique distances as groups
 uniqueDist = unique(T.Distance_m);
@@ -110,13 +134,16 @@ for i = 1:nGroups
 end
 
 % ----- 6. Figure C: Table per distance (display in console, also figure) -----
-figure('Name', 'C — Per-Distance Statistics', 'NumberTitle', 'off', 'Position', [100,550,700,400]);
+figure('Name', 'C — Per-Distance Statistics', 'NumberTitle', 'off');
+set(gcf, 'Color', 'w');
 % Render table as an image in a figure
 uitable('Data', stats{:,:}, 'ColumnName', stats.Properties.VariableNames, ...
     'Position', [20, 20, 660, 360], 'ColumnEditable', false);
+saveas(gcf, [outputBase, '_C.png']);
 
 % ----- 7. Figure D: Mean RSSI vs Distance with error bars -----
-figure('Name', 'D — Mean RSSI vs Distance (with error bars)', 'NumberTitle', 'off', 'Position', [850,550,700,400]);
+figure('Name', 'D — Mean RSSI vs Distance (with error bars)', 'NumberTitle', 'off');
+set(gcf, 'Color', 'w');
 % Only plot groups with N > 1 for error bars
 validGroups = stats.N_Samples > 1;
 if any(validGroups)
@@ -133,6 +160,7 @@ end
 xlabel('Distance (m)'); ylabel('Mean RSSI (dBm)');
 title('Mean RSSI vs Distance with Std Error Bars');
 grid on; box on; legend show;
+saveas(gcf, [outputBase, '_D.png']);
 
 % ----- 8. Fit log-distance path-loss model -----
 % Model: RSSI(d) = A + B * log10(d)
@@ -161,7 +189,8 @@ if sum(fitGroups) >= 2
     fprintf('R-squared = %.4f\n', R2);
 
     % ----- 9. Figure E: Fitted model over measured data -----
-    figure('Name', 'E — Fitted Path-Loss Model', 'NumberTitle', 'off', 'Position', [100,1000,700,400]);
+    figure('Name', 'E — Fitted Path-Loss Model', 'NumberTitle', 'off');
+    set(gcf, 'Color', 'w');
     % Measured means with error bars
     errorbar(stats.Distance_m(validGroups), stats.Mean_RSSI_dBm(validGroups), ...
         stats.Std_RSSI_dBm(validGroups), 'bo', 'MarkerFaceColor', 'b', 'LineWidth', 1.5);
@@ -177,6 +206,7 @@ if sum(fitGroups) >= 2
     xlabel('Distance (m)'); ylabel('RSSI (dBm)');
     title(sprintf('Fitted: RSSI = %.2f + %.2f * log10(d)  (n=%.3f, R^2=%.3f)', A, B, n, R2));
     grid on; box on; legend show;
+    saveas(gcf, [outputBase, '_E.png']);
 else
     warning('Fewer than 2 distance groups with N>=2 samples. Cannot fit path-loss model.\n');
     fprintf('WARNING: Need at least 2 distances with >=2 samples each for fitting.\n');

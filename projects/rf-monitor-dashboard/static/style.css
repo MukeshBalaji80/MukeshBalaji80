@@ -113,7 +113,52 @@ tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
 footer { border-top: 1px solid var(--border); padding-top: 16px; color: var(--text-muted); font-size: 0.85rem; }
 footer p { margin-bottom: 6px; }
 
-/* Responsive */
+/* MATLAB output gallery */
+.matlab-graph-list {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.matlab-graph-item {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  transition: border-color 0.2s;
+}
+.matlab-graph-item:hover {
+  border-color: var(--accent);
+}
+.matlab-graph-item-header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.matlab-graph-img {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: #000;
+  flex-shrink: 0;
+}
+.matlab-graph-filename {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  word-break: break-all;
+}
+.matlab-graph-item-header .hint {
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+.matlab-output-section .card p.hint {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
 @media (max-width: 768px) {
   body { padding: 14px; }
   nav, main { grid-template-columns: 1fr; }

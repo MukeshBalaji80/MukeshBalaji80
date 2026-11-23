@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RF Monitor Dashboard — Mukesh Balaji</title>
+  <link rel="stylesheet" href="rf-monitor-dashboard/static/style.css">
+</head>
+<body>
+
+  <header>
+    <h1>RF Monitor Dashboard</h1>
+    <span class="badge ok">ECE Project</span>
+  </header>
+
+  <main>
+
+    <!-- Overview -->
+    <section class="card">
+      <h2>Overview</h2>
+      <p>A low-cost indoor RF propagation experiment built around an ESP32. The board measures Wi-Fi RSSI (dBm) every second, streams it over USB serial to a local Flask dashboard, and stores samples with a manually entered distance label. Collected data is exported as CSV and analysed with a MATLAB script that fits the log-distance path-loss model.</p>
+      <p class="hint">Distance is always a <b>manual label</b> — it is never calculated from RSSI.</p>
+    </section>
+
+    <!-- Objectives -->
+    <section class="card">
+      <h2>Objectives</h2>
+      <ul class="obj-list">
+        <li>Measure indoor Wi-Fi RSSI as a function of distance using an ESP32.</li>
+        <li>Build a real-time local dashboard for live monitoring, storage, and export.</li>
+        <li>Fit the log-distance path-loss model <code>RSSI(d) = A + B·log10(d)</code> and report path-loss exponent <code>n = -B/10</code>.</li>
+        <li>Keep all hardware low-cost and the workflow simple and reproducible for a student lab.</li>
+      </ul>
+    </section>
+
+    <!-- Hardware -->
+    <section class="card">
+      <h2>Hardware</h2>
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ESP32 dev board</td><td>Wi-Fi RSSI measurement + serial output</td></tr>
+          <tr><td>USB cable (micro-USB / USB-C)</td><td>Power + serial data to laptop</td></tr>
+          <tr><td>Wi-Fi router (2.4 GHz)</td><td>Access point for RSSI measurement</td></tr>
+          <tr><td>Windows laptop</td><td>Runs Flask dashboard + MATLAB</td></tr>
+          <tr><td>Arduino IDE</td><td>Flash ESP32 firmware</td></tr>
+          <tr><td>MATLAB / MATLAB Online</td><td>Path-loss analysis of exported CSV</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Software stack -->
+    <section class="card">
+      <h2>Software Stack</h2>
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Tool</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Firmware</td><td>Arduino / ESP32 core (C++)</td><td>WiFi.h, 115200 baud, CSV-style lines</td></tr>
+          <tr><td>Backend</td><td>Python 3 + Flask</td><td>Threaded PySerial reader, REST endpoints</td></tr>
+          <tr><td>Frontend</td><td>HTML / CSS / vanilla JS + Chart.js</td><td>Dark RF-lab UI, Chart.js vendored locally (offline)</td></tr>
+          <tr><td>Analysis</td><td>MATLAB</td><td>Log-distance fit, per-distance stats, figures A–E</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Dashboard features -->
+    <section class="card">
+      <h2>Dashboard Features</h2>
+      <ul class="obj-list">
+        <li>COM port dropdown + refresh, connect / disconnect controls.</li>
+        <li>Live RSSI reading (dBm) with quality label: Excellent / Good / Fair / Weak / Very weak.</li>
+        <li>Real-time RSSI-vs-time chart (Chart.js, offline).</li>
+        <li>Manual distance input, clearly labelled as a label (not computed).</li>
+        <li>Sample counter, elapsed time, current distance readout.</li>
+        <li>Live serial telemetry log.</li>
+        <li>Measurement history table (newest first).</li>
+        <li>Export CSV (columns: <code>Time_ms,Distance_m,RSSI_dBm</code>) and Clear data.</li>
+        <li>MATLAB section: workflow steps, Export Current CSV, Download MATLAB Code, Open MATLAB Online, inline source.</li>
+        <li>MATLAB Output Graphs gallery: upload real result figures from running the script.</li>
+      </ul>
+    </section>
+
+    <!-- ESP32 data flow -->
+    <section class="card">
+      <h2>ESP32 Data Flow</h2>
+      <p>On boot the firmware connects to Wi-Fi and prints the header line <code>TIME_MS,RSSI_DBM</code> once. Thereafter, while connected, it prints one CSV line per second: <code>millis(),WiFi.RSSI()</code>. While disconnected, it prints only lines starting with <code>#</code> (comment/debug) and never prints fake RSSI. The Flask reader thread parses <code>"time_ms,rssi_dbm"</code> lines, ignores headers/comments/blanks/malformed lines, and appends to a thread-safe store where <code>Time_ms</code> is elapsed ms since collection start and <code>Distance_m</code> is the label active at arrival.</p>
+      <p class="hint">See the source: <a href="https://github.com/MukeshBalaji80/MukeshBalaji80/tree/main/projects/rf-monitor-dashboard/firmware/esp32_rssi">firmware/esp32_rssi/esp32_rssi.ino</a></p>
+    </section>
+
+    <!-- Experimental procedure -->
+    <section class="card">
+      <h2>Experimental Procedure</h2>
+      <ol class="obj-list">
+        <li>Place the ESP32 at the target distance from the router (e.g. 1, 2, 3, 5, 10 m).</li>
+        <li>Enter the distance label in the dashboard and click <b>Set Distance</b>.</li>
+        <li>Click <b>Connect</b>; let it collect for 30–60 seconds (enough samples per group).</li>
+        <li>Click <b>Export CSV</b>; save the file (e.g. <code>rssi_data.csv</code>).</li>
+        <li>Click <b>Clear</b>; repeat for the next distance.</li>
+        <li>After all distances: open MATLAB, run <code>RF_Monitor_Analysis.m</code>, select the CSV, view figures A–E and the grouped-statistics export.</li>
+      </ol>
+    </section>
+
+    <!-- MATLAB analysis -->
+    <section class="card">
+      <h2>MATLAB Analysis</h2>
+      <p>The script <code>matlab/RF_Monitor_Analysis.m</code> validates the CSV columns, drops non-numeric / non-positive-distance rows, and produces:</p>
+      <ul class="obj-list">
+        <li>Figure A: RSSI vs time.</li>
+        <li>Figure B: RSSI vs distance (individual readings).</li>
+        <li>Figure C: per-distance statistics table (mean, std, N) in MATLAB.</li>
+        <li>Figure D: mean RSSI vs distance with std error bars.</li>
+        <li>Figure E: fitted log-distance model over measured means.</li>
+        <li>Fit: <code>RSSI(d) = A + B·log10(d)</code>, with slope <code>B</code>, intercept <code>A</code>, path-loss exponent <code>n = -B/10</code>, and <code>R²</code>. Uses mean RSSI per distance (groups with N ≥ 2).</li>
+        <li>Grouped-statistics CSV exported next to the input file.</li>
+      </ul>
+      <p class="hint">Figures are saved as PNG so they can be uploaded to the dashboard's MATLAB Output Graphs gallery.</p>
+    </section>
+
+    <!-- Source links -->
+    <section class="card">
+      <h2>Source &amp; Links</h2>
+      <div class="link-grid">
+        <a class="link-card" href="https://github.com/MukeshBalaji80/MukeshBalaji80/tree/main/projects/rf-monitor-dashboard">
+          <span class="link-card-title">Source (GitHub)</span>
+          <span class="hint">Full project source</span>
+        </a>
+        <a class="link-card" href="https://raw.githubusercontent.com/MukeshBalaji80/MukeshBalaji80/main/projects/rf-monitor-dashboard/matlab/RF_Monitor_Analysis.m">
+          <span class="link-card-title">MATLAB raw</span>
+          <span class="hint">RF_Monitor_Analysis.m</span>
+        </a>
+        <a class="link-card" href="https://github.com/MukeshBalaji80/MukeshBalaji80/tree/main/projects/rf-monitor-dashboard/matlab">
+          <span class="link-card-title">MATLAB folder</span>
+          <span class="hint">All MATLAB files</span>
+        </a>
+        <a class="link-card" href="http://127.0.0.1:5000">
+          <span class="link-card-title">Local Dashboard</span>
+          <span class="hint">Runs only on your computer while Flask is running</span>
+        </a>
+      </div>
+      <p class="hint">Portfolio: https://mukeshbalaji80.github.io/MukeshBalaji80/ · This page: https://mukeshbalaji80.github.io/MukeshBalaji80/projects/rf-monitor-dashboard.html</p>
+    </section>
+
+    <!-- Results placeholder -->
+    <section class="card">
+      <h2>Results</h2>
+      <p class="hint">No measured results are shown yet. After running the experiment with real ESP32 data, the path-loss model (A, B, n, R²), per-distance mean/std, and figure PNGs will be added here. Nothing on this page is fabricated or estimated.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>RF Monitor Dashboard — Mukesh Balaji (ECE). Local dashboard: <b>http://127.0.0.1:5000</b> (works only on your own computer while the Flask server is running).</p>
+    <p class="hint">Distance is a manual label, never calculated from RSSI.</p>
+  </footer>
+
+  <style>
+    .obj-list { margin: 10px 0 4px 18px; }
+    .obj-list li { margin: 6px 0; }
+    .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 8px; }
+    .link-card { display: block; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); transition: border-color 0.2s; }
+    .link-card:hover { border-color: var(--accent); }
+    .link-card-title { display: block; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+    .link-card .hint { display: block; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    code { background: #07080c; padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+  </style>
+
+</body>
+</html>

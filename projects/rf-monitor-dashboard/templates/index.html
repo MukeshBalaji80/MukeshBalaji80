@@ -119,6 +119,20 @@
     </div>
   </section>
 
+  <section class="matlab-output-section">
+    <div class="card matlab-card">
+      <h2>MATLAB Output Graphs</h2>
+      <p class="hint">Upload real MATLAB output graph images (from running RF_Monitor_Analysis.m on your collected data). These are actual experimental results — never fabricated.</p>
+
+      <div class="button-row">
+        <label class="btn btn-primary" for="matlab-file-input">Upload MATLAB Graph</label>
+        <input type="file" id="matlab-file-input" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" style="display:none">
+      </div>
+
+      <div id="matlab-graph-list" class="matlab-graph-list"></div>
+    </div>
+  </section>
+
   <footer>
     <p>Local dashboard — http://127.0.0.1:5000 — works only on this computer while the Flask server is running.</p>
     <p id="firmware-note">Close Arduino Serial Monitor before connecting; otherwise the port will be busy.</p>

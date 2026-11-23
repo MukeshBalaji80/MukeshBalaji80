@@ -23,9 +23,22 @@ import serial.tools.list_ports
 from datetime import datetime
 from pathlib import Path
 from queue import Queue, Empty
-from flask import Flask, render_template, jsonify, request, send_file, make_response
+from flask import Flask, render_template, jsonify, request, send_file, make_response, send_from_directory
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+# ===== MATLAB Output Graph Storage =====
+# Users upload actual MATLAB output graphs here after running RF_Monitor_Analysis.m
+# These are REAL experimental results — never fabricated. Stored as files.
+MATLAB_OUTPUTS_DIR = Path(__file__).parent / "static" / "matlab_outputs"
+MATLAB_OUTPUTS_DIR.mkdir(exist_ok=True)
+
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "svg"}
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ===== Thread-safe data store =====
 class DataStore:
@@ -298,6 +311,67 @@ def api_matlab():
     if not matlab_path.exists():
         return jsonify({"error": "MATLAB script not found"}), 404
     return send_file(matlab_path, as_attachment=True, download_name="RF_Monitor_Analysis.m")
+
+
+# ===== MATLAB Output Graphs (actual results from running the script) =====
+
+@app.route("/api/matlab_graphs")
+def api_matlab_graphs():
+    """List uploaded MATLAB output graph images (real results only — never fabricated)."""
+    graphs = []
+    for f in sorted(MATLAB_OUTPUTS_DIR.iterdir()):
+        if f.is_file() and allowed_file(f.name):
+            graphs.append({
+                "filename": f.name,
+                "url": f"/api/matlab_graphs/file/{f.name}",
+                "size_kb": round(f.stat().st_size / 1024, 1),
+                "modified": datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
+            })
+    return jsonify({"graphs": graphs})
+
+
+@app.route("/api/matlab_graphs/file/<path:filename>")
+def api_matlab_graph_file(filename):
+    """Serve a specific uploaded MATLAB output image."""
+    filename = secure_filename(filename)
+    filepath = MATLAB_OUTPUTS_DIR / filename
+    if not filepath.exists():
+        return jsonify({"error": "Image not found"}), 404
+    return send_from_directory(MATLAB_OUTPUTS_DIR, filename)
+
+
+@app.route("/api/matlab_graphs/upload", methods=["POST"])
+def api_matlab_graphs_upload():
+    """Upload actual MATLAB output graph images. These are REAL results — never fabricated."""
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "No file selected"}), 400
+    if not allowed_file(file.filename):
+        return jsonify({"error": "File type not allowed (use png, jpg, jpeg, gif, webp, svg)"}), 400
+
+    filename = secure_filename(file.filename)
+    dest = MATLAB_OUTPUTS_DIR / filename
+    file.save(dest)
+    return jsonify({
+        "status": "uploaded",
+        "filename": filename,
+        "url": f"/api/matlab_graphs/file/{filename}",
+        "size_kb": round(dest.stat().st_size / 1024, 1),
+        "message": "MATLAB output graph added to dashboard. These are real experimental results.",
+    })
+
+
+@app.route("/api/matlab_graphs/delete/<path:filename>", methods=["POST"])
+def api_matlab_graphs_delete(filename):
+    """Delete an uploaded MATLAB output graph."""
+    filename = secure_filename(filename)
+    filepath = MATLAB_OUTPUTS_DIR / filename
+    if not filepath.exists():
+        return jsonify({"error": "Image not found"}), 404
+    filepath.unlink()
+    return jsonify({"status": "deleted", "filename": filename})
 
 
 # ===== Main =====

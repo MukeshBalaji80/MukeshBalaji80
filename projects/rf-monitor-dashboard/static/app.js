@@ -14,6 +14,9 @@ const API = {
   setDistance:"/api/set_distance",
   clear:      "/api/clear",
   exportCsv:  "/api/export_csv",
+  matlabGraphs: "/api/matlab_graphs",
+  matlabGraphsUpload: "/api/matlab_graphs/upload",
+  matlabGraphsDelete: "/api/matlab_graphs/delete",
 };
 
 let chart = null;
@@ -40,6 +43,55 @@ async function api(path, opts) {
     throw new Error(msg);
   }
   return data;
+}
+
+/* ---------- MATLAB Output Graphs ---------- */
+async function loadMltGraphList() {
+  const container = document.getElementById("matlab-graph-list");
+  container.innerHTML = "";
+  try {
+    const data = await api(API.matlabGraphs);
+    const graphs = data.graphs || [];
+    if (!graphs.length) {
+      container.innerHTML = "<p class='hint' style='margin-top:12px'>No MATLAB output graphs uploaded yet. Run the MATLAB script on your collected data and upload the resulting figures.</p>";
+      return;
+    }
+    container.innerHTML = graphs.map(g => `
+      <div class="matlab-graph-item">
+        <div class="matlab-graph-item-header">
+          <img src="${g.url}" alt="MATLAB output" class="matlab-graph-img" />
+          <div>
+            <div class="matlab-graph-filename">${g.filename}</div>
+            <div class="hint">${g.size_kb} KB · added ${g.modified}</div>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  } catch (e) {
+    container.innerHTML = `<p class='hint' style='margin-top:12px'>Could not load MATLAB graphs: ${e.message}</p>`;
+  }
+}
+
+async function uploadMltGraph(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  try {
+    const res = await fetch(API.matlabGraphsUpload, { method: "POST", body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+    await loadMltGraphList();
+    return data;
+  } catch (e) {
+    alert("MATLAB graph upload failed: " + e.message);
+    throw e;
+  }
+}
+
+async function deleteMltGraph(filename) {
+  try {
+    await fetch(`${API.matlabGraphsDelete}/${encodeURIComponent(filename)}`, { method: "POST" });
+    await loadMltGraphList();
+  } catch (e) { /* ignore */ }
 }
 
 /* ---------- Ports ---------- */
@@ -266,6 +318,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("clear-btn").addEventListener("click", clearData);
   document.getElementById("export-btn").addEventListener("click", exportCsv);
 
+  // MATLAB graph upload
+  document.getElementById("matlab-file-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) uploadMltGraph(file);
+    e.target.value = ""; // reset so same file can be re-selected
+  });
+
   // Render MATLAB source injected inline by Flask (single source of truth)
   const matlabEl = document.getElementById("matlab-code");
   if (matlabEl && window.__MATLAB_CODE__) {
@@ -274,4 +333,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pollTimer = setInterval(poll, 1000);
   poll();
+  loadMltGraphList();
 });
